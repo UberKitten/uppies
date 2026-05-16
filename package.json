@@ -1,0 +1,31 @@
+{
+  "name": "uppies",
+  "version": "1.0.0",
+  "description": "Minimal self-hosted file-receive service with Uppy-based UI.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "uppies": "./bin/uppies.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "build:frontend": "node scripts/build-frontend.js",
+    "cli": "node src/cli.js"
+  },
+  "dependencies": {
+    "@fastify/static": "^9.1.3",
+    "@tus/file-store": "^1.5.0",
+    "@tus/server": "^1.10.0",
+    "better-sqlite3": "^11.5.0",
+    "commander": "^12.1.0",
+    "fastify": "^5.1.0"
+  },
+  "devDependencies": {
+    "@uppy/core": "^4.4.0",
+    "@uppy/tus": "^4.2.0",
+    "esbuild": "^0.28.0"
+  }
+}

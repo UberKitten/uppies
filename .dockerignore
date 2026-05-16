@@ -1,0 +1,8 @@
+node_modules
+frontend/dist
+data
+.git
+.gitignore
+*.log
+README.md
+pomerium-route.md

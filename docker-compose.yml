@@ -1,0 +1,19 @@
+services:
+  uppies:
+    # Either pull the prebuilt image:
+    image: ghcr.io/uberkitten/uppies:latest
+    # …or build from the local checkout (comment out `image:` above):
+    # build: .
+
+    container_name: uppies
+    restart: unless-stopped
+    environment:
+      # Public URL the CLI prints on `share create`. Optional — without this
+      # the CLI prints share-relative paths only.
+      UPPIES_PUBLIC_URL: ${UPPIES_PUBLIC_URL:-}
+      UPPIES_STORAGE_DIR: /data
+      UPPIES_PORT: "3000"
+    ports:
+      - "${UPPIES_HOST_PORT:-8050}:3000"
+    volumes:
+      - ${UPPIES_HOST_STORAGE:-./data}:/data
