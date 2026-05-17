@@ -4,3 +4,5 @@ data/
 *.log
 .env
 docker-compose.override.yml
+compose.yaml
+compose.override.yaml
