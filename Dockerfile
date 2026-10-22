@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:22.23.4-alpine AS build
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN node scripts/build-frontend.js
 RUN npm prune --omit=dev
 
 # ── runtime ────────────────────────────────────────────────────────────────
-FROM node:22-alpine AS runtime
+FROM node:22.23.4-alpine AS runtime
 
 WORKDIR /app
 

@@ -58,6 +58,37 @@ The CLI prints the full URL — open it in a browser, drop files, done.
 > `git clone` this repo and `docker compose build` — the bundled
 > `docker-compose.yml` builds locally and includes example traefik labels.
 
+### Runtime security maintenance
+
+Both image stages pin Node `22.23.4-alpine`, the supported Node 22 security
+release from [2026-10-21](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases).
+Use `npm ci` with the committed lockfile. The bounded security maintenance also
+pins Fastify `5.12.5` and `@fastify/static` `10.1.2`, with patched router/URI/brace
+dependencies; it does not refresh unrelated packages. The static plugin remains
+compatible with Fastify 5. Its v10 `setHeaders` callback change does not affect
+this app, which does not configure that callback. The existing `build.yml`
+workflow publishes GHCR images from `main`. There is no repository test script;
+the Docker build checks the locked install, native SQLite binding, and frontend
+bundle. Use only disposable local data for synthetic HTTP/static/upload checks,
+never a production share or upload.
+
+Production is the single `uppies` service on `lowtrust-apps`, managed by
+`homelab-infra/ansible/bin/apps-vms`, not the retired Apps VM. Before activation,
+retain the exact old image and root-only project/config preimages, stop only
+Uppies, and retain a stopped-consistent copy of its complete `/data` bind
+(catalog, shares, and tus temporary files). Pin the verified GHCR digest in the
+platform declaration and use its guarded one-project render/pull/start procedure.
+Preserve environment, uid 1000, mounts, ports, and networks. Verify Node's actual
+version, `GET /health`, the existing public TLS health path, and unchanged
+catalog/file state without creating shares or uploading. Share URLs are secrets;
+any existing-share read must remain inside the authorized consumer.
+
+Rollback is operator-assisted only: stop the new instance, restore the retained
+project/image selection, and start exactly one instance through the same guarded
+platform procedure. Restore coupled state only if required and explicitly
+authorized; never overwrite later uploads or automatically restore vulnerable
+code. Keep old image and state checkpoints until the operator closes retention.
+
 ## Environment variables
 
 | Var                  | Default       | Notes                                                                  |
@@ -149,7 +180,7 @@ For uploads of arbitrary size, your proxy needs:
 ## Bind-mount permissions
 
 The container runs as `uid 1000` (the `node` user from the upstream
-`node:22-alpine` image). The bind-mounted storage dir on the host needs to be
+`node:22.23.4-alpine` image). The bind-mounted storage dir on the host needs to be
 writable by that uid:
 
 ```sh
